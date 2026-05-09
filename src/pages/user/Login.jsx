@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { LogIn, ArrowLeft } from 'lucide-react';
+import api from '../../utils/api';
 
 export default function UserLogin() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const handleGoogleLogin = () => {
-    // Client-side only mock google login
-    login('user');
-    navigate('/user/intake');
+    setLoading(true);
+    // Redirect to the backend Google OAuth endpoint
+    window.location.href = 'http://localhost:2000/api/v1/auth/google';
   };
 
   return (
@@ -37,6 +41,12 @@ export default function UserLogin() {
           <p className="text-slate-400 mt-2 text-center">Sign in to access the intake form.</p>
         </div>
 
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg mb-6 text-sm">
+            {error}
+          </div>
+        )}
+
         <button 
           onClick={handleGoogleLogin}
           className="w-full bg-white text-slate-800 hover:bg-slate-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 transform active:scale-[0.98] shadow-lg flex justify-center items-center gap-3 mb-2"
@@ -59,7 +69,7 @@ export default function UserLogin() {
               fill="#EA4335"
             />
           </svg>
-          Sign in with Google
+          {loading ? 'Signing in...' : 'Sign in with Google'}
         </button>
       </motion.div>
     </div>

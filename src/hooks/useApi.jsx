@@ -1,32 +1,40 @@
 import { useState } from 'react';
-
-// Mock data storage to simulate a database for the current session
-let mockDatabase = [];
+import api from '../utils/api';
 
 export function useApi() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Simulate a network delay
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
   const submitIntake = async (data) => {
     setLoading(true);
     setError(null);
     try {
-      await delay(1200); // simulate network request
-      
-      const newEntry = {
-        ...data,
-        id: Math.random().toString(36).substr(2, 9),
-        submittedAt: new Date().toISOString()
-      };
-      
-      mockDatabase.push(newEntry);
-      
-      return { success: true, data: newEntry };
+      const formData = new FormData();
+      for (const key in data) {
+        if (key === 'description') {
+          formData.append('projectDescription', data[key]);
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
+      const response = await api.post('/intake/intake', formData);
+      return { success: true, data: response.data.data || response.data };
     } catch (err) {
-      setError(err.message || 'Failed to submit intake form');
+      setError(err.response?.data?.message || err.message || 'Failed to submit intake form');
+      return { success: false, error: err };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyResponse = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get('/intake/my-response');
+      return { success: true, data: response.data.data || response.data };
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to fetch your response');
       return { success: false, error: err };
     } finally {
       setLoading(false);
@@ -37,10 +45,10 @@ export function useApi() {
     setLoading(true);
     setError(null);
     try {
-      await delay(800); // simulate network request
-      return { success: true, data: [...mockDatabase].reverse() };
+      const response = await api.get('/intake/intakes');
+      return { success: true, data: response.data.data || response.data };
     } catch (err) {
-      setError(err.message || 'Failed to fetch responses');
+      setError(err.response?.data?.message || err.message || 'Failed to fetch responses');
       return { success: false, error: err };
     } finally {
       setLoading(false);
@@ -51,6 +59,7 @@ export function useApi() {
     loading,
     error,
     submitIntake,
-    fetchResponses
+    fetchResponses,
+    fetchMyResponse
   };
 }

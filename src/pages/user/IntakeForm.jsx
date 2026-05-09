@@ -8,7 +8,8 @@ import { useAuth } from '../../contexts/AuthContext';
 
 export default function IntakeForm() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { submitIntake, loading, error } = useApi();
+  const { submitIntake, fetchMyResponse, loading, error } = useApi();
+  const [checkingPastResponse, setCheckingPastResponse] = React.useState(true);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -23,6 +24,30 @@ export default function IntakeForm() {
     logout();
     navigate('/');
   };
+
+  React.useEffect(() => {
+    const checkResponse = async () => {
+      const res = await fetchMyResponse();
+      if (res.success && res.data && res.data.length > 0) {
+        navigate('/user/success', { state: res.data[0] });
+      } else {
+        setCheckingPastResponse(false);
+      }
+    };
+    checkResponse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (checkingPastResponse) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-[#0b1120]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+          <p className="text-slate-400">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center p-6 relative pt-20 pb-20">
@@ -111,15 +136,12 @@ export default function IntakeForm() {
             {/* Budget */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">Estimated Budget (USD)</label>
-              <select 
-                className="glass-input appearance-none"
+              <input 
+                type="text"
+                className="glass-input"
+                placeholder="e.g. $10,000"
                 {...register("budget")}
-              >
-                <option value="< $5k" className="text-slate-800">Less than $5,000</option>
-                <option value="$5k - $10k" className="text-slate-800">$5,000 - $10,000</option>
-                <option value="$10k - $25k" className="text-slate-800">$10,000 - $25,000</option>
-                <option value="$25k+" className="text-slate-800">$25,000+</option>
-              </select>
+              />
             </div>
 
             {/* Project Description */}

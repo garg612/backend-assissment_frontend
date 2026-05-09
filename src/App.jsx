@@ -13,13 +13,15 @@ import AdminDashboard from './pages/admin/Dashboard';
 // Protected Route Components
 const ProtectedUserRoute = ({ children }) => {
   const { user } = useAuth();
-  if (!user || user.role !== 'user') return <Navigate to="/user/login" />;
+  const token = localStorage.getItem('token');
+  if (!user || user.role !== 'user' || !token) return <Navigate to="/user/login" />;
   return children;
 };
 
 const ProtectedAdminRoute = ({ children }) => {
   const { user } = useAuth();
-  if (!user || user.role !== 'admin') return <Navigate to="/admin/login" />;
+  const token = localStorage.getItem('token');
+  if (!user || user.role !== 'admin' || !token) return <Navigate to="/admin/login" />;
   return children;
 };
 

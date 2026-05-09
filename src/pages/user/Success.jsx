@@ -82,7 +82,7 @@ export default function Success() {
             <div>
               <span className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Project Description</span>
               <p className="text-slate-300 text-sm bg-black/20 p-3 rounded-lg leading-relaxed whitespace-pre-wrap">
-                {responseData.description}
+                {responseData.projectDescription || responseData.description}
               </p>
             </div>
           </div>

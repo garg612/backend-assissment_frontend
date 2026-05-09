@@ -87,7 +87,7 @@ export default function AdminDashboard() {
               <motion.div 
                 key={res.id} 
                 variants={cardVariants}
-                className="glass-panel rounded-xl overflow-hidden flex flex-col hover:border-purple-500/30 transition-colors"
+                className="glass-panel rounded-xl overflow-hidden flex flex-col hover:border-purple-500/30 transition-colors group"
               >
                 {/* Card Header */}
                 <div className="bg-slate-800/50 p-5 border-b border-white/5">
@@ -124,8 +124,8 @@ export default function AdminDashboard() {
                   
                   <div className="mt-2">
                     <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Project Description</h4>
-                    <p className="text-sm text-slate-300 line-clamp-4 leading-relaxed">
-                      {res.description}
+                    <p className="text-sm text-slate-300 line-clamp-4 group-hover:line-clamp-none transition-all duration-300 leading-relaxed">
+                      {res.projectDescription || res.description}
                     </p>
                   </div>
                 </div>
