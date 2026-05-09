@@ -15,7 +15,8 @@ export default function UserLogin() {
   const handleGoogleLogin = () => {
     setLoading(true);
     // Redirect to the backend Google OAuth endpoint
-    window.location.href = 'http://localhost:2000/api/v1/auth/google';
+    const baseUrl = import.meta.env.VITE_API_URL || 'https://backend-assissment1.onrender.com/api/v1';
+    window.location.href = `${baseUrl}/auth/google`;
   };
 
   return (
